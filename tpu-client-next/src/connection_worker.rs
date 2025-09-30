@@ -316,8 +316,7 @@ impl ConnectionWorker {
     /// If an error occurs, the state may transition to `Retry` or `Closing`,
     /// depending on the nature of the error.
     async fn create_connection(&mut self, retries_attempt: usize) {
-        let server_name = socket_addr_to_quic_server_name(self.peer);
-        let connecting = self.endpoint.connect(self.peer, &server_name);
+	let connecting = self.endpoint.connect(self.peer, "connect");
         match connecting {
             Ok(connecting) => {
                 let mut measure_connection = Measure::start("establish connection");

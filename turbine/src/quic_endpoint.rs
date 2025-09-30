@@ -45,6 +45,7 @@ const CLIENT_CHANNEL_BUFFER: usize = 1 << 14;
 const ROUTER_CHANNEL_BUFFER: usize = 64;
 const CONNECTION_CACHE_CAPACITY: usize = 3072;
 const ALPN_TURBINE_PROTOCOL_ID: &[u8] = b"solana-turbine";
+const CONNECT_SERVER_NAME: &str = "solana-turbine";
 
 // Transport config.
 const DATAGRAM_RECEIVE_BUFFER_SIZE: usize = 256 * 1024 * 1024;
@@ -504,8 +505,9 @@ async fn make_connection(
     cache: Arc<Mutex<HashMap<Pubkey, Connection>>>,
     stats: Arc<TurbineQuicStats>,
 ) -> Result<(), Error> {
-    let server_name = socket_addr_to_quic_server_name(remote_address);
-    let connection = endpoint.connect(remote_address, &server_name)?.await?;
+    let connection = endpoint
+    .connect(remote_address, CONNECT_SERVER_NAME)?
+    .await?;
     handle_connection(
         endpoint,
         connection.remote_address(),
